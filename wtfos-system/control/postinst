@@ -33,7 +33,6 @@ find . -name \*.sh -type f -exec chmod u+x {} \;
 # useful for faster testing
 if [[ -z "${SKIP_SYSTEM_IMAGE}" ]]; then
     #copy the current active slots system image to our overlay image
-    #/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/
     dd if=/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/system of=./system.img
 fi
 
@@ -49,15 +48,11 @@ sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
 sed -i '/^#!\/system\/bin\/sh$/r templates/startup-tpl.sh' /system/bin/${WTFOS_TARGET_SCRIPT}
 
 #restore selinux context for the target script as it's the one disabling selinux...
-#chgrp shell /system/bin/${WTFOS_TARGET_SCRIPT}
-#chcon u:object_r:system_file:s0 /system/bin/${WTFOS_TARGET_SCRIPT}
 restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
 
 #remove old margerine startup patch
 if grep -q "#margerine" /system/bin/setup_usb_serial.sh; then
     sed -i '/#margerine/,/#\/margerine/d' /system/bin/setup_usb_serial.sh
-    #chgrp shell /system/bin/setup_usb_serial.sh
-    #chcon u:object_r:dji_service_exec:s0 /system/bin/setup_usb_serial.sh
     restorecon /system/bin/setup_usb_serial.sh
 fi
 
@@ -74,8 +69,6 @@ for filename in /system/bin/start_dji_system*.sh; do
         cp ${filename} ${filename}.orig
     fi
     sed -i '/# judge blackbox is formated/,/# judge cache partition/c\# judge cache partition is formated or not\. if not, format it\.' ${filename}
-    #chgrp shell ${filename}
-    #chcon u:object_r:system_file:s0 ${filename}
     restorecon ${filename}
 done
 
