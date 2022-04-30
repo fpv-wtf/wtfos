@@ -1,0 +1,89 @@
+#!/system/bin/sh
+set -e
+set -x
+
+export $(grep -v '^#' /blackbox/wtfos/device/$(getprop ro.product.device).env | xargs)
+#disable selinux
+busybox devmem ${WTFOS_SELINUX_DISABLE} 32 0
+
+cd /blackbox/wtfos/
+
+if mount | grep "/dev/loop0"; then 
+    while  mount | grep "/dev/loop0";
+    do
+        /system/bin/umount -d -l /system
+        sleep 1
+    done
+    echo "wtfos: loopmount unmounted"
+fi
+#remount system so we can patch it
+while mount | grep '/system ext4 ro' -q > /dev/null;
+do 
+    /system/bin/mount -o rw,remount /system
+    sleep 1
+done
+
+
+#prepare new cmdline for *150
+cat /proc/cmdline | busybox sed -e 's/state=production/state=engineering/g' -e 's/verity=1/verity=0/g' -e 's/debug=0/debug=1/g' > ./cmdline
+
+#because when you build in wsl from your windows home dir permissions are bad
+find . -name \*.sh -type f -exec chmod u+x {} \;
+
+# useful for faster testing
+if [[ -z "${SKIP_SYSTEM_IMAGE}" ]]; then
+    #copy the current active slots system image to our overlay image
+    dd if=/dev/block/mirror/system of=./system.img
+fi
+
+if [[ ! -f /system/bin/${WTFOS_TARGET_SCRIPT}.orig ]]
+then
+    cp /system/bin/${WTFOS_TARGET_SCRIPT} /system/bin/${WTFOS_TARGET_SCRIPT}.orig
+fi
+
+#clean any previous wtfos installation
+sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
+
+#insert out startup patches right after #!/system/bin/sh
+sed -i '/^#!\/system\/bin\/sh$/r templates/startup-tpl.sh' /system/bin/${WTFOS_TARGET_SCRIPT}
+
+#restore selinux context for the target script as it's the one disabling selinux...
+#chgrp shell /system/bin/${WTFOS_TARGET_SCRIPT}
+#chcon u:object_r:system_file:s0 /system/bin/${WTFOS_TARGET_SCRIPT}
+restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
+
+#remove old margerine startup patch
+if grep -q "#margerine" /system/bin/setup_usb_serial.sh; then
+    sed -i '/#margerine/,/#\/margerine/d' /system/bin/setup_usb_serial.sh
+    #chgrp shell /system/bin/setup_usb_serial.sh
+    #chcon u:object_r:dji_service_exec:s0 /system/bin/setup_usb_serial.sh
+    restorecon /system/bin/setup_usb_serial.sh
+fi
+
+
+#prepare our new image
+/system/xbin/busybox mount -t ext4 -o loop,rw /blackbox/wtfos/system.img /system
+#just in case, make sure we're not gonna get in an infite loop
+sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
+
+#make sure the next scripts don't mess with /blackbox
+for filename in /system/bin/start_dji_system*.sh; do
+    if [[ ! -f ${filename}.orig ]]
+    then
+        cp ${filename} ${filename}.orig
+    fi
+    sed -i '/# judge blackbox is formated/,/# judge cache partition/c\# judge cache partition is formated or not\. if not, format it\.' ${filename}
+    #chgrp shell ${filename}
+    #chcon u:object_r:system_file:s0 ${filename}
+    restorecon ${filename}
+done
+
+#make our mkshrc.d work
+if [[ ! -f /system/etc/mkshrc.orig ]]
+then
+    cp /system/etc/mkshrc /system/etc/mkshrc.orig
+fi
+sed -i '/#wtfos/,/#\/wtfos/d'  /system/etc/mkshrc
+sed -i -e "/: place customisations above this line/ {r templates/mkshrc-tpl.sh" -e 'N}'  /system/etc/mkshrc
+
+sync
