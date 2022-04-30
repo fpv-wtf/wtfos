@@ -3,12 +3,15 @@
 { # try
     alias logme="tee /dev/kmsg | tee -a /blackbox/wtfos.log"
     beep () {
-      for i in `seq 1 $1`; do
-        test_pwm 0 2349 70 1 1
-        sleep 0.3
-        test_pwm 0 2300 50 1 0
-        sleep 0.1
-      done
+      if [[ $WTFOS_DEVICE == gl* ]]; then
+        for i in `seq 1 $1`; do
+          test_pwm 0 2349 70 1 1
+          sleep 0.3
+          test_pwm 0 2300 50 1 0
+          sleep 0.1
+        done
+      fi
+      ##todo else flash LED
     }
 
     echo "wtfos: starting wtfos" | logme

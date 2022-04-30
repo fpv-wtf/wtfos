@@ -1,0 +1,54 @@
+name: Build .ipk packages and setup-payload.tgz
+
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Get GitHub Build Number (ENV)
+        id: get_buildno
+        run: echo "GITHUBBUILDNUMBER=${{ github.run_number }}" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Get Pull Request Number
+        id: get_pullno
+        run: echo "PULL_NUMBER=$(echo "$GITHUB_REF" | awk -F / '{print $3}')" >> $GITHUB_ENV
+        if: startsWith(github.ref, 'refs/pull/')
+
+      - name: Make artifact name
+        id: make_artifactname
+        run: |
+          ARTIFACT_NAME="DINIT-IPK-BUILD-${{ github.run_number }}"
+          echo "${ARTIFACT_NAME}"
+          echo "ARTIFACT_NAME=${ARTIFACT_NAME}" >> $GITHUB_ENV
+
+      - name: Build ipk packages
+        run: ./make-packages.sh
+
+      - name: Make setup-paylod.tgz
+        run: tar czvf setup-payload.tgz setup
+      
+      - name: Upload ipks
+        uses: actions/upload-artifact@v2
+        with:
+          name: ipks
+          path: ./*/*.ipk
+
+      - name: Upload setup payload
+        uses: actions/upload-artifact@v2
+        with:
+          name: setup-payload
+          path: ./setup-payload.tgz

@@ -1,0 +1,6 @@
+Package: default-margerine-proxy
+Version: 1.0.0
+Maintainer: Joonas Trussmann joonas@batman.ee
+Description: Adds the margerine proxy to mkshrc.d for conveniece
+Architecture: armv7-3.2
+Depends: wtfos-system

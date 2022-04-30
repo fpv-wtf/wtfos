@@ -27,5 +27,5 @@ opkg update
 if [ -f wtfos-system*.ipk ]; then
     opkg install "$(set -- wtfos-system*.ipk; echo "$1")"
 else 
-    opkg install wtfos-system
+    opkg install wtfos
 fi

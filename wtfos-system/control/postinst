@@ -33,7 +33,8 @@ find . -name \*.sh -type f -exec chmod u+x {} \;
 # useful for faster testing
 if [[ -z "${SKIP_SYSTEM_IMAGE}" ]]; then
     #copy the current active slots system image to our overlay image
-    dd if=/dev/block/mirror/system of=./system.img
+    #/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/
+    dd if=/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/system of=./system.img
 fi
 
 if [[ ! -f /system/bin/${WTFOS_TARGET_SCRIPT}.orig ]]
