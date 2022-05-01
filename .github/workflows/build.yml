@@ -1,9 +1,10 @@
-name: Build .ipk packages and setup-payload.tgz
-
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
+    tags:
+      - '*'
+
   pull_request:
     branches: [ main ]
 
@@ -11,7 +12,58 @@ on:
   workflow_dispatch:
 
 jobs:
+  release:
+    name: Create new releas and attach IPKs and setup payload
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: build
+    steps:
+      - name: Branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=IS_TAG::${{ startsWith(github.ref, 'refs/tags/') }}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+          echo ::set-output name=RELEASE_VERSION::${GITHUB_REF#refs/*/}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+
+      - name: View content
+        run: ls -R
+
+      - name: Create main push pre-release
+        id: create_pre_release
+        env:
+            IS_TAG: ${{ steps.branch_name.outputs.IS_TAG }}
+            RELEASE_VERSION: ${{ steps.branch_name.outputs.RELEASE_VERSION }}
+        if: "${{ env.IS_TAG == 'false' }}"
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.RELEASE_VERSION }}-${{ github.run_number }}
+          name: ${{ env.RELEASE_VERSION }}-${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          artifacts: "./*/*.ipk,./*/setup-payload.tgz"
+
+      - name: Create tagged release
+        id: create_release
+        env:
+            IS_TAG: ${{ steps.branch_name.outputs.IS_TAG }}
+            SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+        if: "${{ env.IS_TAG == 'true' }}"
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.SOURCE_TAG }}
+          name: ${{ env.SOURCE_TAG }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          artifacts: "./*/*.ipk,./*/setup-payload.tgz"
+
   build:
+    name: Build .ipk packages and setup-payload.tgz
     runs-on: ubuntu-latest
 
     steps:
@@ -23,15 +75,14 @@ jobs:
         run: echo "GITHUBBUILDNUMBER=${{ github.run_number }}" >> $GITHUB_ENV
         continue-on-error: true
 
-      - name: Get Pull Request Number
-        id: get_pullno
-        run: echo "PULL_NUMBER=$(echo "$GITHUB_REF" | awk -F / '{print $3}')" >> $GITHUB_ENV
-        if: startsWith(github.ref, 'refs/pull/')
+      - name: Get repository name
+        run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | cut -d '/' -f2)" >> $GITHUB_ENV
+        shell: bash
 
       - name: Make artifact name
         id: make_artifactname
         run: |
-          ARTIFACT_NAME="DINIT-IPK-BUILD-${{ github.run_number }}"
+          ARTIFACT_NAME="${{ env.REPOSITORY_NAME }}-${{ github.run_number }}"
           echo "${ARTIFACT_NAME}"
           echo "ARTIFACT_NAME=${ARTIFACT_NAME}" >> $GITHUB_ENV
 
@@ -40,11 +91,11 @@ jobs:
 
       - name: Make setup-paylod.tgz
         run: tar czvf setup-payload.tgz setup
-      
+
       - name: Upload release artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: release
+          name: ${{ env.ARTIFACT_NAME }}
           path: |
             ./*.ipk
             ./setup-payload.tgz
