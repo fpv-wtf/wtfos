@@ -3,9 +3,9 @@
 
 ### Compatability
 
- - V1 Goggles - SD card doesn't mount
- - V2 Goggles - no known issues
- - Vista - no known issues
+ - V1 Goggles - no currently known issues
+ - V2 Goggles - no currently known issues
+ - Vista - no currently known issues
  - Air Unit - untested
 
 # Setup
