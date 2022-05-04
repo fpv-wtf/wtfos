@@ -5,8 +5,8 @@ on:
     tags:
       - '*'
 
-  pull_request:
-    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -27,26 +27,20 @@ jobs:
           echo ::set-output name=RELEASE_VERSION::${GITHUB_REF#refs/*/}
 
       - name: Download artifact
+        env:
+            IS_TAG: ${{ steps.branch_name.outputs.IS_TAG }}
+            SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+        if: "${{ env.IS_TAG == 'true' }}"
         uses: actions/download-artifact@v2
         with:
           name: ${{ env.ARTIFACT_NAME }}
 
       - name: View content
-        run: ls -R
-
-      - name: Create main push pre-release
-        id: create_pre_release
         env:
             IS_TAG: ${{ steps.branch_name.outputs.IS_TAG }}
-            RELEASE_VERSION: ${{ steps.branch_name.outputs.RELEASE_VERSION }}
-        if: "${{ env.IS_TAG == 'false' }}"
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ env.RELEASE_VERSION }}-${{ github.run_number }}
-          name: ${{ env.RELEASE_VERSION }}-${{ github.run_number }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
-          artifacts: "./*/*.ipk,./*/setup-payload.tgz"
+            SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+        if: "${{ env.IS_TAG == 'true' }}"
+        run: ls -R
 
       - name: Create tagged release
         id: create_release
