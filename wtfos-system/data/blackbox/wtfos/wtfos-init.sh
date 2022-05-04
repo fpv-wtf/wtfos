@@ -6,15 +6,23 @@ if [ "$1" != "startup" ]; then
    exit 2
 fi
 
+remount_slash=false
+
 echo "wtfos: entware starting"
-/system/xbin/busybox mount -o rw,remount / 2>&1 | logme
+if mount | grep -q "rootfs ro"; then 
+    remount_slash=true
+    /system/xbin/busybox mount -o rw,remount / 2>&1 | logme
+fi
 sleep 1
 mkdir -p /bin
 ln -sf /system/bin/sh /bin/sh
 if [[ ! -L /opt ]] ; then
     ln -sf /blackbox/wtfos/opt /opt
 fi
-/system/xbin/busybox mount -o ro,remount /
+if [ "$remount_slash" = true ] ; then
+    /system/xbin/busybox mount -o ro,remount /
+fi
+
 sleep 1
 echo "wtfos: /opt and /bin/sh created"
 

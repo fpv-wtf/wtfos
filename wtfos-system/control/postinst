@@ -8,8 +8,8 @@ busybox devmem ${WTFOS_SELINUX_DISABLE} 32 0
 
 cd /blackbox/wtfos/
 
-if mount | grep "/dev/loop0"; then 
-    while  mount | grep "/dev/loop0";
+if mount | grep "/dev/loop"; then 
+    while  mount | grep "/dev/loop";
     do
         /system/bin/umount -d -l /system
         sleep 1
@@ -58,9 +58,19 @@ fi
 
 
 #prepare our new image
-/system/xbin/busybox mount -t ext4 -o loop,rw /blackbox/wtfos/system.img /system
+until  mount | grep -q "/dev/loop";
+do
+    /system/xbin/busybox mount -t ext4 -o loop,rw /blackbox/wtfos/system.img /system
+    sleep 1
+done
 #just in case, make sure we're not gonna get in an infite loop
 sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
+
+#remove old margerine startup patch
+if grep -q "#margerine" /system/bin/setup_usb_serial.sh; then
+    sed -i '/#margerine/,/#\/margerine/d' /system/bin/setup_usb_serial.sh
+    restorecon /system/bin/setup_usb_serial.sh
+fi
 
 #make sure the next scripts don't mess with /blackbox
 for filename in /system/bin/start_dji_system*.sh; do
