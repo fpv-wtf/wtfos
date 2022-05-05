@@ -25,7 +25,7 @@ echo "#wtfos\nsrc/gz fpv-wtf http://repo.fpv.wtf/pigeon\n#/wtfos" >> /opt/etc/op
 opkg update
 #install wtfos meta package (dinit, wtfos-system)
 if [ -f wtfos-system*.ipk ]; then
-    opkg install "$(set -- wtfos-system*.ipk; echo "$1")"
+    opkg install --force-reinstall "$(set -- wtfos-system*.ipk; echo "$1")"
 else 
-    opkg install --force-reinstall wtfos wtfos-system
+    opkg install wtfos
 fi

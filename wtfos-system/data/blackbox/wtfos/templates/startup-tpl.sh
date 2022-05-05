@@ -18,7 +18,7 @@
     #mount blackbox early
     mount_dev=/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/by-name/blackbox
     e2fsck -fy $mount_dev 
-    mount -t ext4 $mount_dev /blackbox 2>&1 | logme
+    busybox mount -t ext4 $mount_dev /blackbox 2>&1 | logme
     echo "wtfos: mounted blackbox" | logme
     
     if [ -f /blackbox/wtfos/device/$(getprop ro.product.device).env ]; then
