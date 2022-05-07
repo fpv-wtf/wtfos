@@ -11,7 +11,8 @@ mount -o ro,remount /
 #don't worry, it upgrades http to https
 export http_proxy="http://127.0.0.1:8089/"
 
-cd /tmp/setup
+BASEDIR=$(dirname "$0")
+cd "$BASEDIR"
 mkdir -p /blackbox/wtfos/opt/bin
 cp ./busybox /blackbox/wtfos/opt/bin
 chmod u+x /blackbox/wtfos/opt/bin/busybox
@@ -26,6 +27,7 @@ opkg update
 #install wtfos meta package (dinit, wtfos-system)
 if [ -f wtfos-system*.ipk ]; then
     opkg install --force-reinstall "$(set -- wtfos-system*.ipk; echo "$1")"
+    opkg install wtfos
 else 
     opkg install wtfos
 fi

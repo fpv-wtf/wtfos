@@ -4,7 +4,12 @@ set -x
 
 export $(grep -v '^#' /blackbox/wtfos/device/$(getprop ro.product.device).env | xargs)
 #disable selinux
-busybox devmem ${WTFOS_SELINUX_DISABLE} 32 0
+tries=0
+until [ $(getenforce) = "Permissive" ] || [ $tries -eq 25 ]
+do
+    busybox devmem ${WTFOS_SELINUX_DISABLE} 32 0
+    tries=$((tries+1))
+done
 
 #remount system so we can patch it
 if mount | grep "/dev/loop"; then 
@@ -22,8 +27,12 @@ do
     sleep 1
 done
 
-#clean any previous wtfos installation
+#clean any wtfos installation
 sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
+#keep selinux disable and adb unlock
+sed -i '/^#!\/system\/bin\/sh$/r /blackbox/wtfos/templates/adb-only-tpl.sh' /system/bin/${WTFOS_TARGET_SCRIPT}
+#no blackbox, so replace var
+busybox sed -i "s/\${WTFOS_SELINUX_DISABLE}/${WTFOS_SELINUX_DISABLE}/g" /system/bin/${WTFOS_TARGET_SCRIPT}
 
 restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
 

@@ -24,9 +24,24 @@
     if [ -f /blackbox/wtfos/device/$(getprop ro.product.device).env ]; then
 
       export $(grep -v '^#' /blackbox/wtfos/device/$(getprop ro.product.device).env | xargs)
-      busybox devmem ${WTFOS_SELINUX_DISABLE} 32 0 | logme
+      #for some reason on lt150(/*150?) devmem takes a few tries sometimes
+      #this will occiasionally result in boots where unslung gets permission denied
+      #why? cpu caching of some sort?
+      tries=0
+      until [ $(getenforce) = "Permissive" ] || [ $tries -eq 25 ]
+      do
+          busybox devmem ${WTFOS_SELINUX_DISABLE} 32 0
+          tries=$((tries+1))
+      done
+
       echo "wtfos: disabled selinux" | logme
 
+      #make sure our cmdline bindmount file hasn't been deleted or isn't blank (bad time)
+      if [[ ! -f /blackbox/wtfos/cmdline ]] || [[ ! -s /blackbox/wtfos/cmdline ]]
+      then
+        mkdir -p /blackbox/wtfos/
+        cat /proc/cmdline | busybox sed -e 's/state=production/state=engineering/g' -e 's/verity=1/verity=0/g' -e 's/debug=0/debug=1/g' > /blackbox/wtfos/cmdline
+      fi
       #doesn't work (nor matter) on gl170
       /system/xbin/busybox mount -o bind,ro /blackbox/wtfos/cmdline /proc/cmdline || true
 
@@ -61,4 +76,3 @@
 
 #MUST have empty row at the end
 #/wtfos
-
