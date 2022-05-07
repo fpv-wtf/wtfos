@@ -30,6 +30,9 @@ if mount | grep -q "/proc/cmdline"; then
 fi
 cat /proc/cmdline | busybox sed -e 's/state=production/state=engineering/g' -e 's/verity=1/verity=0/g' -e 's/debug=0/debug=1/g' > ./cmdline
 
+#doesn't work (nor matter) on gl170
+/system/xbin/busybox mount -o bind,ro /blackbox/wtfos/cmdline /proc/cmdline || true
+
 #because when you build in wsl from your windows home dir permissions are bad
 find . -name \*.sh -type f -exec chmod u+x {} \;
 
