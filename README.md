@@ -64,9 +64,5 @@ Packages wishing to use dinit should depend on it and install their configuratio
 ### Uninstalling
 Should you wish to return to the plain adb root hack, run the following on your device:
 
-    opkg remove --force-removal-of-dependent-packages wtfos-system
+    opkg remove --force-removal-of-dependent-packages wtfos wtfos-system
     reboot
-
-To regain full access (some devices will loose adb completely) you will need to run margerine again:
-
-    node margerine.js unlock
