@@ -1,0 +1,33 @@
+#!/system/bin/sh
+
+if  mount | grep -q "/dev/loop"; then
+    echo "please uninstall wtfos first with: opkg remove --force-removal-of-dependent-packages wtfos wtfos-system"
+    exit 1
+fi
+
+remove_adb()
+{
+    while mount | grep '/system ext4 ro' -q > /dev/null;
+    do 
+        /system/bin/mount -o rw,remount /system
+        sleep 1
+    done
+    sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
+    restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
+}
+
+if [ "$1" = "-q" ]; then
+    remove_adb
+    exit 0
+fi
+
+echo "Are you sure? y/n"
+read -n 1 -r
+echo ""
+if [ "$REPLY" = "y" ]
+then
+    remove_adb
+    echo "done, please reboot"
+else 
+    echo "didn't answer 'y', not doing anything"
+fi

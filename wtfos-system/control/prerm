@@ -36,4 +36,9 @@ busybox sed -i "s/\${WTFOS_SELINUX_DISABLE}/${WTFOS_SELINUX_DISABLE}/g" /system/
 
 restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
 
+#drop final adb removal script
+cp /blackbox/wtfos/wtfos-remove-adb /system/bin/wtfos-remove-adb
+chmod u+x /system/bin/wtfos-remove-adb
+busybox sed -i "s/\${WTFOS_TARGET_SCRIPT}/${WTFOS_TARGET_SCRIPT}/g" /system/bin/wtfos-remove-adb
+
 sync
