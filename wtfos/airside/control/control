@@ -1,6 +1,6 @@
 Package: wtfos
-Version: 0.3.2
+Version: 0.3.3
 Maintainer: Joonas Trussmann joonas@batman.ee
 Description: wtfos meta package
-Architecture: armv7-3.2
+Architecture: pigeon-airside
 Depends: wtfos-system, wtfos-opkg-config, dinit

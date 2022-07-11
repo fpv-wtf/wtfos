@@ -1,0 +1,6 @@
+Package: wtfos
+Version: 0.3.3
+Maintainer: Joonas Trussmann joonas@batman.ee
+Description: wtfos meta package
+Architecture: pigeon-glasses
+Depends: wtfos-system, wtfos-opkg-config, fan-control, dinit
