@@ -1,6 +1,6 @@
 Package: wtfos
-Version: 0.3.1
+Version: 0.3.2
 Maintainer: Joonas Trussmann joonas@batman.ee
 Description: wtfos meta package
 Architecture: armv7-3.2
-Depends: wtfos-system, wtfos-opkg-config, fan-control, dinit
+Depends: wtfos-system, wtfos-opkg-config, dinit
