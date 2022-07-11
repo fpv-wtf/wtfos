@@ -63,6 +63,13 @@ if grep -q "#margerine" /system/bin/setup_usb_serial.sh; then
     restorecon /system/bin/setup_usb_serial.sh
 fi
 
+if grep -q '"addtranslations" value="true"' /system/gui/etc/diskorc.xml; then
+    #fix disk fillup caused by addtranslations=true in diskorc, even on real system just in case
+    busybox sed -i 's/addtranslations" value="true"/addtranslations" value="false"/' /system/gui/etc/diskorc.xml
+    #clean up after any previous mess
+    sed -i '/.*===$/d' /system/gui/lang/translation.*
+fi
+
 
 #prepare our new image
 until  mount | grep -q "/dev/loop";
@@ -96,5 +103,13 @@ then
 fi
 sed -i '/#wtfos/,/#\/wtfos/d'  /system/etc/mkshrc
 sed -i -e "/: place customisations above this line/ {r templates/mkshrc-tpl.sh" -e 'N}'  /system/etc/mkshrc
+
+
+if grep -q '"addtranslations" value="true"' /system/gui/etc/diskorc.xml; then
+    #fix disk fillup caused by addtranslations=true in diskorc
+    busybox sed -i 's/addtranslations" value="true"/addtranslations" value="false"/' /system/gui/etc/diskorc.xml
+    #clean up after any previous mess
+    sed -i '/.*===$/d' /system/gui/lang/translation.*
+fi
 
 sync
