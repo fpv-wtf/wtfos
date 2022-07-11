@@ -1,3 +1,4 @@
 *.ipk
 */ipk
+*/*/ipk
 setup-payload.tgz
