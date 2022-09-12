@@ -3,7 +3,7 @@
 
 It includes anti-bricking measures, a [configurator](https://github.com/fpv-wtf/wtfos-configurator), a [package manager](https://git.yoctoproject.org/opkg/), a [service manager](https://github.com/davmac314/dinit) and a [vendor service modification framework](https://github.com/fpv-wtf/wtfos-modloader).
 
-You can support the project on [Buymeacoffe](https://www.buymeacoffee.com/dashboard) and join us on our [Discord](https://discord.gg/3rpnBBJKtU).
+You can support the project on [Buymeacoffe](https://www.buymeacoffee.com/fpv.wtf) and join us on our [Discord](https://discord.gg/3rpnBBJKtU).
 
 ## Compatability
 wtfos-configurator officially only supports rooting on **V01.00.0606** firmware. It is compatible with:
