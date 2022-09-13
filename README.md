@@ -3,7 +3,7 @@
 
 It includes anti-bricking measures, a [configurator](https://github.com/fpv-wtf/wtfos-configurator), a [package manager](https://git.yoctoproject.org/opkg/), a [service manager](https://github.com/davmac314/dinit) and a [vendor service modification framework](https://github.com/fpv-wtf/wtfos-modloader).
 
-You can support the project on [Buymeacoffe](https://www.buymeacoffee.com/fpv.wtf) and join us on our [Discord](https://discord.gg/3rpnBBJKtU).
+You can support the project on [Open Collective](https://opencollective.com/fpv-wtf/donate?amount=10) and join us on our [Discord](https://discord.gg/3rpnBBJKtU).
 
 ## Compatability
 wtfos-configurator officially only supports rooting on **V01.00.0606** firmware. It is compatible with:
@@ -85,7 +85,7 @@ Use the Android [NDK](https://developer.android.com/ndk/downloads) to build bina
 
 ## Support the effort
 
-If you'd like, you can [buy us a coffe](https://www.buymeacoffee.com/fpv.wtf), send some ETH to `0xbAB1fec80922328F27De6E2F1CDBC2F322397637` or BTC to `3L7dE5EHtyd2b1tXBwdnWC2MADkV2VTbrq`.
+If you'd like, you can support the project on [Open Collective](https://opencollective.com/fpv-wtf/donate?amount=10), send some ETH to `0xbAB1fec80922328F27De6E2F1CDBC2F322397637` or BTC to `3L7dE5EHtyd2b1tXBwdnWC2MADkV2VTbrq`.
 
 ## Credits
 Based on the [margerine](https://github.com/fpv-wtf/margerine) root method. Please blame:
