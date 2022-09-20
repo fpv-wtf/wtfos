@@ -5,6 +5,11 @@ It includes anti-bricking measures, a [configurator](https://github.com/fpv-wtf/
 
 You can support the project on [Open Collective](https://opencollective.com/fpv-wtf/donate?amount=10) and join us on our [Discord](https://discord.gg/3rpnBBJKtU).
 
+## Video Guide
+See Mad's Tech's [getting started guide](https://www.youtube.com/watch?v=hNOA0kUjKhY).
+
+[![Mad's Tech wtfos getting started guide](https://img.youtube.com/vi/hNOA0kUjKhY/0.jpg)](https://www.youtube.com/watch?v=hNOA0kUjKhY)
+
 ## Compatability
 wtfos-configurator officially only supports rooting on **V01.00.0606** firmware. It is compatible with:
 
