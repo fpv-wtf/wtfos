@@ -14,6 +14,11 @@
       ##todo else flash LED
     }
 
+    #clean up coredumps
+    if [ -d /data/coredump ]; then 
+        rm -f $(busybox ls -1td /data/coredump/* | tail -n "+6")
+    fi
+
     echo "wtfos: starting wtfos" | logme
     #mount blackbox early
     mount_dev=/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/by-name/blackbox
@@ -48,7 +53,8 @@
       #so we can get events
       insmod /system/lib/modules/gpio_keys.ko | logme
 
-      if getevent -i -l | grep -q "KEY_PROG3\\*"; 
+      ## account for /data/wtfos_disable_bind for broken bind buttons
+      if [ ! -f /data/wtfos_disable_bind ] && getevent -i -l | grep -q "KEY_PROG3\\*"; 
       then
         echo "wtfos: bind button down, skipping the rest of startup" | logme
         beep 3

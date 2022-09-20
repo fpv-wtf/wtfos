@@ -14,7 +14,7 @@ wtfos-configurator officially only supports rooting on **V01.00.0606** firmware.
  - DJI FPV Goggles V2
 
 #### V2 Goggles
-On V2 Goggles you must flash **V01.00.0606** from DIY mode a.k.a. DJI HD FPV System mode using assistant in order to be able to root.
+On V2 Goggles you must flash **V01.00.0606** from DIY mode a.k.a. DJI HD FPV System mode using assistant in order to be able to root. If you have anything other than V01.00.0606 shown when checked in DJI FPV Drone mode, the root will not work. Both modes must have V01.00.0606.
 
 Following that, if you own and use the DJI FPV Drone, you may wish to use the free [Dronehacks](https://drone-hacks.com/download) firmware flasher to upgrade to V01.02.0001 obtained from [Dank Drone Downloader](http://dankdronedownloader.com/DDD2/app/index.php?model=gl170&ver=01.02.0001&type=Other&Brand=DJI) for best compatibility prior to installing wtfos. If you upgrade at a later time, simply re-install wtfos.
 
