@@ -25,7 +25,7 @@ Following that, if you own and use the DJI FPV Drone, you may wish to use the fr
 
 # Setup and usage
 
-Use the [configurator](https://testing.fpv.wtf/) to root your device, install wtfos and manage [community provided packages](https://repo.fpv.wtf/pigeon/).
+Use the [configurator](https://fpv.wtf/) to root your device, install wtfos and manage [community provided packages](https://repo.fpv.wtf/pigeon/).
 
 Some of the available packages include:
 
@@ -50,7 +50,7 @@ The opkg package manager is available with [fpv-wtf/opkg-repo](https://repo.fpv.
 
 Everything is installed in `/opt/` (which is a symlink to `/blackbox/wtfos/opt/`) which is added your your path automatically by the scripts in `/blackbox/wtfos/mkshrc.d/`.
 
-The easiest way to browse and manage packages is via the the [configurator](https://testing.fpv.wtf/).
+The easiest way to browse and manage packages is via the the [configurator](https://fpv.wtf/).
 
 #### Advanced usage
 
@@ -59,7 +59,7 @@ For command line usage instructions see the [opkg wiki page](https://openwrt.org
 ### Service management
 Use [dinit](https://github.com/stylesuxx/dji-hd-fpv-dinit) which is available in the repository for advanced service management with dependencies, enabling/disabling of units and more. 
 
-Users can manage services with the [configurator](https://testing.fpv.wtf/) or the `dinitctl ` command in the cli.
+Users can manage services with the [configurator](https://fpv.wtf/) or the `dinitctl ` command in the cli.
 
 Packages wishing to use dinit should depend on it and install their unit in /opt/etc/dinit.d/.
 
