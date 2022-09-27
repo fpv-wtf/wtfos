@@ -79,7 +79,7 @@ Hop on our [Discord](https://discord.gg/3rpnBBJKtU).
 
 ## Developers
 
-Use the Android [NDK](https://developer.android.com/ndk/downloads) to build binaries with a target of **android-23** and platform of **armeabi-v7a**. Check out the [margerine wiki](https://github.com/fpv-wtf/margerine/wiki) and the following repos:
+Use the Android [NDK](https://developer.android.com/ndk/downloads) to build binaries with a target of **android-23** and platform of **armeabi-v7a**. Check out the [wtfos wiki](https://github.com/fpv-wtf/wtfos/wiki) and the following repos:
 
  - https://github.com/stylesuxx/ipk-example
  - https://github.com/fpv-wtf/opkg-repo
