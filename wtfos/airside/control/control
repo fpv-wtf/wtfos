@@ -3,4 +3,6 @@ Version: 0.3.4
 Maintainer: Joonas Trussmann joonas@batman.ee
 Description: wtfos meta package
 Architecture: pigeon-airside
+Homepage: https://github.com/fpv-wtf/wtfos
+Section: system
 Depends: wtfos-system, wtfos-opkg-config, dinit

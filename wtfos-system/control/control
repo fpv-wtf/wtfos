@@ -3,3 +3,5 @@ Version: 0.1.7
 Maintainer: Joonas Trussmann joonas@batman.ee
 Description: wtfos startup patches
 Architecture: armv7-3.2
+Homepage: https://github.com/fpv-wtf/wtfos
+Section: system
