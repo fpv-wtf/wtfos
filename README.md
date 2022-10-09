@@ -5,6 +5,11 @@ It includes anti-bricking measures, a [configurator](https://github.com/fpv-wtf/
 
 You can support the project on [Open Collective](https://opencollective.com/fpv-wtf/donate?amount=10) and join us on our [Discord](https://discord.gg/3rpnBBJKtU).
 
+## Video Guide
+See Mad's Tech's [getting started guide](https://www.youtube.com/watch?v=hNOA0kUjKhY).
+
+[![Mad's Tech wtfos getting started guide](https://img.youtube.com/vi/hNOA0kUjKhY/0.jpg)](https://www.youtube.com/watch?v=hNOA0kUjKhY)
+
 ## Compatability
 wtfos-configurator officially only supports rooting on **V01.00.0606** firmware. It is compatible with:
 
@@ -20,7 +25,7 @@ Following that, if you own and use the DJI FPV Drone, you may wish to use the fr
 
 # Setup and usage
 
-Use the [configurator](https://testing.fpv.wtf/) to root your device, install wtfos and manage [community provided packages](https://repo.fpv.wtf/pigeon/).
+Use the [configurator](https://fpv.wtf/) to root your device, install wtfos and manage [community provided packages](https://repo.fpv.wtf/pigeon/).
 
 Some of the available packages include:
 
@@ -45,7 +50,7 @@ The opkg package manager is available with [fpv-wtf/opkg-repo](https://repo.fpv.
 
 Everything is installed in `/opt/` (which is a symlink to `/blackbox/wtfos/opt/`) which is added your your path automatically by the scripts in `/blackbox/wtfos/mkshrc.d/`.
 
-The easiest way to browse and manage packages is via the the [configurator](https://testing.fpv.wtf/).
+The easiest way to browse and manage packages is via the the [configurator](https://fpv.wtf/).
 
 #### Advanced usage
 
@@ -54,7 +59,7 @@ For command line usage instructions see the [opkg wiki page](https://openwrt.org
 ### Service management
 Use [dinit](https://github.com/stylesuxx/dji-hd-fpv-dinit) which is available in the repository for advanced service management with dependencies, enabling/disabling of units and more. 
 
-Users can manage services with the [configurator](https://testing.fpv.wtf/) or the `dinitctl ` command in the cli.
+Users can manage services with the [configurator](https://fpv.wtf/) or the `dinitctl ` command in the cli.
 
 Packages wishing to use dinit should depend on it and install their unit in /opt/etc/dinit.d/.
 
@@ -74,7 +79,7 @@ Hop on our [Discord](https://discord.gg/3rpnBBJKtU).
 
 ## Developers
 
-Use the Android [NDK](https://developer.android.com/ndk/downloads) to build binaries with a target of **android-23** and platform of **armeabi-v7a**. Check out the [margerine wiki](https://github.com/fpv-wtf/margerine/wiki) and the following repos:
+Use the Android [NDK](https://developer.android.com/ndk/downloads) to build binaries with a target of **android-23** and platform of **armeabi-v7a**. Check out the [wtfos wiki](https://github.com/fpv-wtf/wtfos/wiki) and the following repos:
 
  - https://github.com/stylesuxx/ipk-example
  - https://github.com/fpv-wtf/opkg-repo
