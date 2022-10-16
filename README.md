@@ -31,7 +31,7 @@ Some of the available packages include:
 
  - [msp-osd](https://github.com/bri3d/msp-osd) for full OSD
  - [enable_live_audio](https://github.com/funneld/djifpv_enable_live_audio/) to enable live audio playback from an Air Unit
- - [auto-start-recording](https://repo.fpv.wtf/pigeon/auto-start-recording_0.1.1_armv7-3.2.ipk) to start recording automatically as soon as an air unit is connected
+ - [auto-record](http://repo.fpv.wtf/pigeon/auto-record_1.0.0_pigeon-glasses.ipk) to start recording automatically as soon as an air unit is connected
  - [tweak-prevent-force-upgrade](https://repo.fpv.wtf/pigeon/tweak-prevent-force-upgrade_0.9.0_armv7-3.2.ipk) resets any forced upgrade statues (caused by connecting to the Fly app in FPV Drone mode) on startup
 
 See the configurator for a full and up to date listing.
