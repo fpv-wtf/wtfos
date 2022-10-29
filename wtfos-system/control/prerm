@@ -11,6 +11,24 @@ do
     tries=$((tries+1))
 done
 
+patch_slot () {
+    sys_path="/system"
+    #clean any wtfos installation
+    sed -i '/#wtfos/,/#\/wtfos/d' ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}
+    #keep selinux disable and adb unlock
+    sed -i '/^#!\/system\/bin\/sh$/r /blackbox/wtfos/templates/adb-only-tpl.sh' ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}
+    #no blackbox, so replace var
+    busybox sed -i "s/\${WTFOS_SELINUX_DISABLE}/${WTFOS_SELINUX_DISABLE}/g" ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}
+
+    restorecon ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}
+
+    #drop final adb removal script
+    cp /blackbox/wtfos/wtfos-remove-adb ${sys_path}/bin/wtfos-remove-adb
+    chmod u+x ${sys_path}/bin/wtfos-remove-adb
+    busybox sed -i "s/\${WTFOS_TARGET_SCRIPT}/${WTFOS_TARGET_SCRIPT}/g" ${sys_path}/bin/wtfos-remove-adb
+
+    sync
+}
 #remount system so we can patch it
 if mount | grep "/dev/loop"; then 
     while  mount | grep "/dev/loop";
@@ -21,24 +39,25 @@ if mount | grep "/dev/loop"; then
     echo "wtfos: loopmount unmounted"
 fi
 
+# patch the inactive slot
+until mount | grep 'system_2 /system' -q > /dev/null;
+do 
+    mount -t ext4 /dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/system_2 /system
+    sleep 1
+done
+
+patch_slot
+
+while mount | grep 'system_2 /system' -q > /dev/null;
+do 
+    /system/bin/umount -d -l /system
+    sleep 1
+done
+
 while mount | grep '/system ext4 ro' -q > /dev/null;
 do 
     /system/bin/mount -o rw,remount /system
     sleep 1
 done
 
-#clean any wtfos installation
-sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
-#keep selinux disable and adb unlock
-sed -i '/^#!\/system\/bin\/sh$/r /blackbox/wtfos/templates/adb-only-tpl.sh' /system/bin/${WTFOS_TARGET_SCRIPT}
-#no blackbox, so replace var
-busybox sed -i "s/\${WTFOS_SELINUX_DISABLE}/${WTFOS_SELINUX_DISABLE}/g" /system/bin/${WTFOS_TARGET_SCRIPT}
-
-restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
-
-#drop final adb removal script
-cp /blackbox/wtfos/wtfos-remove-adb /system/bin/wtfos-remove-adb
-chmod u+x /system/bin/wtfos-remove-adb
-busybox sed -i "s/\${WTFOS_TARGET_SCRIPT}/${WTFOS_TARGET_SCRIPT}/g" /system/bin/wtfos-remove-adb
-
-sync
+patch_slot

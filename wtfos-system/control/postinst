@@ -8,108 +8,142 @@ busybox devmem ${WTFOS_SELINUX_DISABLE} 32 0
 
 cd /blackbox/wtfos/
 
-if mount | grep "/dev/loop"; then 
-    while  mount | grep "/dev/loop";
+patch_slot () {
+    sys_path="/system"
+    if [[ ! -f ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}.orig ]]
+    then
+        cp ${sys_path}/bin/${WTFOS_TARGET_SCRIPT} ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}.orig
+    fi
+
+    #clean any previous wtfos installation
+    sed -i '/#wtfos/,/#\/wtfos/d' ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}
+
+    #insert out startup patches right after #!/system/bin/sh
+    sed -i '/^#!\/system\/bin\/sh$/r templates/startup-tpl.sh' ${sys_path}/bin/${WTFOS_TARGET_SCRIPT}
+
+    #restore selinux context for the target script as it's the one disabling selinux...
+    restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
+
+    #remove old margerine startup patch
+    if grep -q "#margerine" ${sys_path}/bin/setup_usb_serial.sh; then
+        sed -i '/#margerine/,/#\/margerine/d' ${sys_path}/bin/setup_usb_serial.sh
+        restorecon ${sys_path}/bin/setup_usb_serial.sh
+    fi
+
+    if grep -q '"addtranslations" value="true"' ${sys_path}/gui/etc/diskorc.xml; then
+        #fix disk fillup caused by addtranslations=true in diskorc, even on real system just in case
+        busybox sed -i 's/addtranslations" value="true"/addtranslations" value="false"/' ${sys_path}/gui/etc/diskorc.xml
+        #clean up after any previous mess
+        sed -i '/.*===$/d' ${sys_path}/gui/lang/translation.*
+    fi
+    sync
+}
+
+unmount_loop () {
+    if mount | grep "/dev/loop"; then 
+        while  mount | grep "/dev/loop";
+        do
+            /system/bin/umount -d -l /system
+            sleep 1
+        done
+        echo "wtfos: loopmount unmounted"
+    fi
+}
+
+prepare_new_system () {
+    # presume we're doing an upgrade
+    # the configurator will wipe this during an uninstall
+    if [[ ! -f ./system.img ]]; then
+        #copy the current active slots system image to our overlay image
+        dd if=/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/system of=./system.img
+    fi
+    #mount our new image
+    until  mount | grep -q "/dev/loop";
     do
-        /system/bin/umount -d -l /system
+        /system/xbin/busybox mount -t ext4 -o loop,rw /blackbox/wtfos/system.img /system
         sleep 1
     done
-    echo "wtfos: loopmount unmounted"
-fi
+    #just in case, make sure we're not gonna get in an infite loop
+    sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
+
+    #remove old margerine startup patch
+    if grep -q "#margerine" /system/bin/setup_usb_serial.sh; then
+        sed -i '/#margerine/,/#\/margerine/d' /system/bin/setup_usb_serial.sh
+        restorecon /system/bin/setup_usb_serial.sh
+    fi
+
+    #make sure the next scripts don't mess with /blackbox
+    for filename in /system/bin/start_dji_system*.sh; do
+        if [[ ! -f ${filename}.orig ]]
+        then
+            cp ${filename} ${filename}.orig
+        fi
+        sed -i '/# judge blackbox is formated/,/# judge cache partition/c\# judge cache partition is formated or not\. if not, format it\.' ${filename}
+        restorecon ${filename}
+    done
+
+    #make our mkshrc.d work
+    if [[ ! -f /system/etc/mkshrc.orig ]]
+    then
+        cp /system/etc/mkshrc /system/etc/mkshrc.orig
+    fi
+    sed -i '/#wtfos/,/#\/wtfos/d'  /system/etc/mkshrc
+    sed -i -e "/: place customisations above this line/ {r templates/mkshrc-tpl.sh" -e 'N}'  /system/etc/mkshrc
+
+
+    if grep -q '"addtranslations" value="true"' /system/gui/etc/diskorc.xml; then
+        #fix disk fillup caused by addtranslations=true in diskorc
+        busybox sed -i 's/addtranslations" value="true"/addtranslations" value="false"/' /system/gui/etc/diskorc.xml
+        #clean up after any previous mess
+        sed -i '/.*===$/d' /system/gui/lang/translation.*
+    fi
+
+    sync
+    unmount_loop
+}
+
+prepare_cmdline () {
+    #prepare new cmdline for *150
+    if mount | grep -q "/proc/cmdline"; then 
+        /system/bin/umount /proc/cmdline
+    fi
+    cat /proc/cmdline | busybox sed -e 's/state=production/state=engineering/g' -e 's/verity=1/verity=0/g' -e 's/debug=0/debug=1/g' > ./cmdline
+
+    #doesn't work (nor matter) on gl170
+    /system/xbin/busybox mount -o bind,ro /blackbox/wtfos/cmdline /proc/cmdline || true
+}
+
+
+#because when you build in wsl from your windows home dir permissions are bad
+find . -name \*.sh -type f -exec chmod u+x {} \;
+
+unmount_loop
+
+#prepare wtfos system.img
+prepare_new_system
+
+# patch the inactive slot
+
+until mount | grep 'system_2 /system' -q > /dev/null;
+do 
+    mount -t ext4 /dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/system_2 /system
+    sleep 1
+done
+
+patch_slot
+
+while mount | grep 'system_2 /system' -q > /dev/null;
+do 
+    /system/bin/umount -d -l /system
+    sleep 1
+done
+
+
 #remount system so we can patch it
 while mount | grep '/system ext4 ro' -q > /dev/null;
 do 
     /system/bin/mount -o rw,remount /system
     sleep 1
 done
-
-
-#prepare new cmdline for *150
-if mount | grep -q "/proc/cmdline"; then 
-    /system/bin/umount /proc/cmdline
-fi
-cat /proc/cmdline | busybox sed -e 's/state=production/state=engineering/g' -e 's/verity=1/verity=0/g' -e 's/debug=0/debug=1/g' > ./cmdline
-
-#doesn't work (nor matter) on gl170
-/system/xbin/busybox mount -o bind,ro /blackbox/wtfos/cmdline /proc/cmdline || true
-
-#because when you build in wsl from your windows home dir permissions are bad
-find . -name \*.sh -type f -exec chmod u+x {} \;
-
-# presume we're doing an upgrade
-# the configurator will wipe this during an uninstall
-if [[ ! -f ./system.img ]]; then
-    #copy the current active slots system image to our overlay image
-    dd if=/dev/block/platform/soc/f0000000.ahb/f0400000.dwmmc0/mirror/system of=./system.img
-fi
-
-if [[ ! -f /system/bin/${WTFOS_TARGET_SCRIPT}.orig ]]
-then
-    cp /system/bin/${WTFOS_TARGET_SCRIPT} /system/bin/${WTFOS_TARGET_SCRIPT}.orig
-fi
-
-#clean any previous wtfos installation
-sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
-
-#insert out startup patches right after #!/system/bin/sh
-sed -i '/^#!\/system\/bin\/sh$/r templates/startup-tpl.sh' /system/bin/${WTFOS_TARGET_SCRIPT}
-
-#restore selinux context for the target script as it's the one disabling selinux...
-restorecon /system/bin/${WTFOS_TARGET_SCRIPT}
-
-#remove old margerine startup patch
-if grep -q "#margerine" /system/bin/setup_usb_serial.sh; then
-    sed -i '/#margerine/,/#\/margerine/d' /system/bin/setup_usb_serial.sh
-    restorecon /system/bin/setup_usb_serial.sh
-fi
-
-if grep -q '"addtranslations" value="true"' /system/gui/etc/diskorc.xml; then
-    #fix disk fillup caused by addtranslations=true in diskorc, even on real system just in case
-    busybox sed -i 's/addtranslations" value="true"/addtranslations" value="false"/' /system/gui/etc/diskorc.xml
-    #clean up after any previous mess
-    sed -i '/.*===$/d' /system/gui/lang/translation.*
-fi
-
-
-#prepare our new image
-until  mount | grep -q "/dev/loop";
-do
-    /system/xbin/busybox mount -t ext4 -o loop,rw /blackbox/wtfos/system.img /system
-    sleep 1
-done
-#just in case, make sure we're not gonna get in an infite loop
-sed -i '/#wtfos/,/#\/wtfos/d' /system/bin/${WTFOS_TARGET_SCRIPT}
-
-#remove old margerine startup patch
-if grep -q "#margerine" /system/bin/setup_usb_serial.sh; then
-    sed -i '/#margerine/,/#\/margerine/d' /system/bin/setup_usb_serial.sh
-    restorecon /system/bin/setup_usb_serial.sh
-fi
-
-#make sure the next scripts don't mess with /blackbox
-for filename in /system/bin/start_dji_system*.sh; do
-    if [[ ! -f ${filename}.orig ]]
-    then
-        cp ${filename} ${filename}.orig
-    fi
-    sed -i '/# judge blackbox is formated/,/# judge cache partition/c\# judge cache partition is formated or not\. if not, format it\.' ${filename}
-    restorecon ${filename}
-done
-
-#make our mkshrc.d work
-if [[ ! -f /system/etc/mkshrc.orig ]]
-then
-    cp /system/etc/mkshrc /system/etc/mkshrc.orig
-fi
-sed -i '/#wtfos/,/#\/wtfos/d'  /system/etc/mkshrc
-sed -i -e "/: place customisations above this line/ {r templates/mkshrc-tpl.sh" -e 'N}'  /system/etc/mkshrc
-
-
-if grep -q '"addtranslations" value="true"' /system/gui/etc/diskorc.xml; then
-    #fix disk fillup caused by addtranslations=true in diskorc
-    busybox sed -i 's/addtranslations" value="true"/addtranslations" value="false"/' /system/gui/etc/diskorc.xml
-    #clean up after any previous mess
-    sed -i '/.*===$/d' /system/gui/lang/translation.*
-fi
-
-sync
+#patch the active slot
+patch_slot
