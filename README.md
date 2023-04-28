@@ -11,30 +11,27 @@ See Mad's Tech's [getting started guide](https://www.youtube.com/watch?v=hNOA0kU
 [![Mad's Tech wtfos getting started guide](https://img.youtube.com/vi/hNOA0kUjKhY/0.jpg)](https://www.youtube.com/watch?v=hNOA0kUjKhY)
 
 ## Compatability
-wtfos-configurator officially only supports rooting on **V01.00.0606** firmware. It is compatible with:
+
+### Goggles V2
+
+wtfos-configurator only supports rooting on the **V01.00.0606** firmware. This firmware version must be displayed in the **DJI FPV** mode, **DJI Digital FPV system** a.k.a. DIY mode menus can lie about the actual installed firmware version.
+
+If on any other version or in doubt please use [butter](https://github.com/fpv-wtf/butter#usage) to downgrade first.
+
+### All other Devices
+wtfos-configurator supports rooting on **V01.00.0606** or **V01.00.0608** firmware. It is compatible with:
 
  - DJI Air Unit
  - DJI Air Unit Lite a.k.a. Caddx Vista a.k.a. Runcam Link
  - DJI FPV Goggles V1
- - DJI FPV Goggles V2
 
-#### V2 Goggles
-On V2 Goggles you must flash **V01.00.0606** from DIY mode a.k.a. DJI HD FPV System mode using assistant in order to be able to root. If you have anything other than V01.00.0606 shown when checked in DJI FPV Drone mode, the root will not work. Both modes must have V01.00.0606.
-
-Following that, if you own and use the DJI FPV Drone, you may wish to use the free [Dronehacks](https://drone-hacks.com/download) firmware flasher to upgrade to V01.02.0001 obtained from [Dank Drone Downloader](http://dankdronedownloader.com/DDD2/app/index.php?model=gl170&ver=01.02.0001&type=Other&Brand=DJI) for best compatibility prior to installing wtfos. If you upgrade at a later time, simply re-install wtfos.
+### O3 Devices
+There are currently no plans to support the O3 Air Unit, Goggles 2 or Goggles Integra.
 
 # Setup and usage
 
-Use the [configurator](https://fpv.wtf/) to root your device, install wtfos and manage [community provided packages](https://repo.fpv.wtf/pigeon/).
+Use the [configurator](https://fpv.wtf/) to [root](https://fpv.wtf/root) your device, [install](https://fpv.wtf/wtfos/install) wtfos and [manage](https://fpv.wtf/root) [community provided packages](https://repo.fpv.wtf/pigeon/).
 
-Some of the available packages include:
-
- - [msp-osd](https://github.com/bri3d/msp-osd) for full OSD
- - [enable_live_audio](https://github.com/funneld/djifpv_enable_live_audio/) to enable live audio playback from an Air Unit
- - [auto-record](http://repo.fpv.wtf/pigeon/auto-record_1.0.0_pigeon-glasses.ipk) to start recording automatically as soon as an air unit is connected
- - [tweak-prevent-force-upgrade](https://repo.fpv.wtf/pigeon/tweak-prevent-force-upgrade_0.9.0_armv7-3.2.ipk) resets any forced upgrade statues (caused by connecting to the Fly app in FPV Drone mode) on startup
-
-See the configurator for a full and up to date listing.
 
 # Built In Features
 
