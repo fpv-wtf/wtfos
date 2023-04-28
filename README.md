@@ -43,7 +43,7 @@ You can skip this and other wtfos loading procedures by holding down the bind bu
 Then your device should be booted with any modifications skipped at startup to the original system partition and you should once again have access to the device via ADB. 
 
 ### OPKG package management
-The opkg package manager is available with [fpv-wtf/opkg-repo](https://repo.fpv.wtf/pigeon/) and [Entware](https://bin.entware.net/armv7sf-k3.2/Packages.html) added as sources. 
+The opkg package manager is available with [fpv-wtf/opkg-repo](https://repo.fpv.wtf/pigeon/) added as a source. 
 
 Everything is installed in `/opt/` (which is a symlink to `/blackbox/wtfos/opt/`) which is added your your path automatically by the scripts in `/blackbox/wtfos/mkshrc.d/`.
 
