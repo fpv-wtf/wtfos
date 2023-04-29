@@ -1,5 +1,5 @@
 Package: wtfos-system
-Version: 0.2.0
+Version: 0.2.1
 Maintainer: Joonas Trussmann joonas@batman.ee
 Description: wtfos startup patches
 Architecture: armv7-3.2

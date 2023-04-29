@@ -16,9 +16,18 @@ fi
 sleep 1
 mkdir -p /bin
 ln -sf /system/bin/sh /bin/sh
+
+#set up /opt
 if [[ ! -L /opt ]] ; then
     ln -sf /blackbox/wtfos/opt /opt
 fi
+#make sure our /opt/tmp is a link to /tmp
+if [ ! -L /opt/tmp ]; then
+    rm -rf /opt/tmp || true
+    ln -s /tmp /opt/tmp
+fi
+
+#remount / ro if necessesary 
 if [ "$remount_slash" = true ] ; then
     /system/xbin/busybox mount -o ro,remount /
 fi
