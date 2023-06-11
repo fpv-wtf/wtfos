@@ -54,7 +54,7 @@ The easiest way to browse and manage packages is via the the [configurator](http
 For command line usage instructions see the [opkg wiki page](https://openwrt.org/docs/guide-user/additional-software/opkg) for using the `opkg` command in the cli.
 
 ### Service management
-Use [dinit](https://github.com/stylesuxx/dji-hd-fpv-dinit) which is available in the repository for advanced service management with dependencies, enabling/disabling of units and more. 
+Use [dinit](https://github.com/fpv-wtf/dji-hd-fpv-dinit) which is available in the repository for advanced service management with dependencies, enabling/disabling of units and more. 
 
 Users can manage services with the [configurator](https://fpv.wtf/) or the `dinitctl ` command in the cli.
 
@@ -76,7 +76,9 @@ Hop on our [Discord](https://discord.gg/3rpnBBJKtU).
 
 ## Developers
 
-Use the Android [NDK](https://developer.android.com/ndk/downloads) to build binaries with a target of **android-23** and platform of **armeabi-v7a**. Check out the [wtfos wiki](https://github.com/fpv-wtf/wtfos/wiki) and the following repos:
+For a guide on the basics of wtfos packaging see [D3VL's blog post](https://d3vl.com/blog/developing-wtfos-packages/). For native development use the Android [NDK](https://developer.android.com/ndk/downloads) to build binaries with a target of **android-23** and platform of **armeabi-v7a**. 
+
+Check out the [wtfos wiki](https://github.com/fpv-wtf/wtfos/wiki) and the following repos:
 
  - https://github.com/stylesuxx/ipk-example
  - https://github.com/fpv-wtf/opkg-repo
