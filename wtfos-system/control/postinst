@@ -79,7 +79,7 @@ prepare_new_system () {
             cp ${filename} ${filename}.orig
         fi
         sed -i '/# judge blackbox is formated/,/# judge cache partition/c\# judge cache partition is formated or not\. if not, format it\.' ${filename}
-        if [ "${filename}" == "/system/bin/start_dji_system_wm150pro.sh" ]; then
+        if [ "${filename}" == "/system/bin/start_dji_system_wm150pro.sh" ] || [ "${filename}" == "/system/bin/start_dji_system.sh" ]; then
             #we do this to work around memory pressure issues because sdrs_log is largely useless anyway
             busybox sed -i 's/setprop dji.sdrs_log_service 1/setprop dji.sdrs_log_service 0/g' ${filename}
         fi
