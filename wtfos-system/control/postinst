@@ -151,3 +151,18 @@ do
 done
 #patch the active slot
 patch_slot
+
+#remount system ro to make sure no subsequent package updates can corrupt it accidentally
+while mount | grep '/system ext4 rw' -q > /dev/null;
+do 
+    /system/bin/mount -o ro,remount /system
+    sleep 1
+done
+
+#mount our new image so subsequent package updates work properly
+#note that this should not be considered a proper working state, a reboot should still follow
+until  mount | grep -q "/dev/loop";
+do
+    /system/xbin/busybox mount -t ext4 -o loop,rw /blackbox/wtfos/system.img /system
+    sleep 1
+done
