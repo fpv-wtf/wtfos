@@ -79,12 +79,22 @@ prepare_new_system () {
             cp ${filename} ${filename}.orig
         fi
         sed -i '/# judge blackbox is formated/,/# judge cache partition/c\# judge cache partition is formated or not\. if not, format it\.' ${filename}
+        if grep -q "dji.sdrs_log_service 0" ${filename}; then
+            #revert sdrs_log kill if it's in place. causes new problems.
+            busybox sed -i 's/setprop dji.sdrs_log_service 0/setprop dji.sdrs_log_service 1/g' ${filename}
+        fi
         if [ "${filename}" == "/system/bin/start_dji_system_wm150pro.sh" ] || [ "${filename}" == "/system/bin/start_dji_system.sh" ]; then
-            #we do this to work around memory pressure issues because sdrs_log is largely useless anyway
-            busybox sed -i 's/setprop dji.sdrs_log_service 1/setprop dji.sdrs_log_service 0/g' ${filename}
+            #we do this to conserve memory
+            busybox sed -i 's/setprop dji.ftpd_service 1/setprop dji.ftpd_service 0/g' ${filename}
+            busybox sed -i 's/setprop dji.upgrade_service 1/setprop dji.upgrade_service 0/g' ${filename}
+            sed -i '/# dump system\/upgrade log to a special file/,/# do kmsg collection/c\# do kmsg collection' ${filename}
         fi
         restorecon ${filename}
     done
+    
+    #disable dsp logging to save memory
+    #busybox sed -i 's/emmc:on/emmc:off/g' /system/etc/sdrs_offline_log.cfg
+    #off until we've sorted the rtos crash questions
 
     #make our mkshrc.d work
     if [[ ! -f /system/etc/mkshrc.orig ]]

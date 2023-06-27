@@ -1,11 +1,6 @@
 #!/system/bin/sh
 alias logme="tee /dev/kmsg | tee -a /blackbox/wtfos.log"
 
-if [ "$1" != "startup" ]; then
-   echo "you probably don't want to run me by hand" | logme
-   exit 2
-fi
-
 remount_slash=false
 
 echo "wtfos: entware starting"
@@ -45,7 +40,7 @@ echo "wtfos: ran dji startup script" | logme
 #but otherwise we have a bad time for some reason with dinit installed?
 #the dinit start script spawns with & 
 #needs investigation
-/opt/etc/init.d/rc.unslung start 2>&1 | logme &
+. /opt/etc/init.d/rc.unslung start 2>&1 >> /blackbox/wtfos.log &
 echo "wtfos: started entware unslung" | logme
 
 exit 0
