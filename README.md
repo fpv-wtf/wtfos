@@ -28,7 +28,7 @@ wtfos-configurator supports rooting on **V01.00.0606** or **V01.00.0608** firmwa
 ### Newer Devices
 If using V2 Goggles with O3 Air Units please see [https://fpv.wtf/package/fpv-wtf/o3-multipage-osd](https://github.com/xNuclearSquirrel/o3-multipage-osd).
 
-There are currently no plans to support the O3 Air Unit, Goggles 2, Goggles Integra or Goggles 3.
+There are currently no plans to support the O4 Air Unit, Goggles 2, Goggles Integra or Goggles 3.
 
 # Setup and usage
 
