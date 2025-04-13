@@ -25,8 +25,10 @@ wtfos-configurator supports rooting on **V01.00.0606** or **V01.00.0608** firmwa
  - DJI Air Unit Lite a.k.a. Caddx Vista a.k.a. Runcam Link
  - DJI FPV Goggles V1
 
-### O3 Devices
-There are currently no plans to support the O3 Air Unit, Goggles 2 or Goggles Integra.
+### Newer Devices
+If using V2 Goggles with O3 Air Units please see [https://fpv.wtf/package/fpv-wtf/o3-multipage-osd](https://github.com/xNuclearSquirrel/o3-multipage-osd).
+
+There are currently no plans to support the O3 Air Unit, Goggles 2, Goggles Integra or Goggles 3.
 
 # Setup and usage
 
